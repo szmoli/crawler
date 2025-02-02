@@ -1,5 +1,5 @@
-#ifndef WINDOW_H
-#define WINDOW_H
+#ifndef SCREEN_H
+#define SCREEN_H
 
 int get_width(void);
 int get_height(void);

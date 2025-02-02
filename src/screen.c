@@ -1,4 +1,5 @@
 #include <sys/ioctl.h>
+#include "screen.h"
 
 int get_width(void) {
     struct winsize w;
