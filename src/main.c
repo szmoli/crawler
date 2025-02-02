@@ -17,6 +17,11 @@ int main(void) {
     while (running) {
         // check input
         // TODO
+        char input;
+        scanf("%c", &input);
+        if (input == 'q') {
+            running = false;
+        }
 
 
         // calculations
@@ -37,7 +42,7 @@ int main(void) {
     }
 
     // Free all allocated memory here.
-    destroy_screen_data(screen_data, width, height);
+    destroy_screen_data(screen_data, height);
 
     return 0;
 }

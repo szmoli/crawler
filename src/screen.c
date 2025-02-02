@@ -29,12 +29,10 @@ char **init_screen_data(int width, int height) {
     return screen_data;
 }
 
-void destroy_screen_data(char **screen_data, int width, int height) {
+void destroy_screen_data(char **screen_data, int height) {
     // Free all chars individually.
     for (int y = 0; y < height; ++y) {
-        for (int x = 0; x < width; ++x) {
-            free(&screen_data[y][x]);
-        }
+        free(screen_data[y]);
     }
 
     // Free the array.
