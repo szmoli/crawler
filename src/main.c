@@ -4,24 +4,23 @@
 
 int main(void) {
     bool running = true;
-    int width = get_width();
-    int height = get_height() - 1; // -1 for the cursor line
-    char **screen_data = init_screen_data(width, height);
+    bool updated = true;
+    
+    init_screen();
 
     /**
      *  1. check input
      *  2. do calculations based on input
      *  3. draw using the updated data
      */
-    bool updated = true;
     while (running) {
         // check input
         // TODO
-        char input;
-        scanf("%c", &input);
-        if (input == 'q') {
-            running = false;
-        }
+        // char input;
+        // scanf("%c", &input);
+        // if (input == 'q') {
+        //     running = false;
+        // }
 
 
         // calculations
@@ -30,19 +29,14 @@ int main(void) {
 
         // drawing the screen
         if (updated) {
-            for (int y = 0; y < height; ++y) {
-                for (int x = 0; x < width; ++x) {
-                    printf("%c", screen_data[y][x]);
-                }
-                printf("\n");
-            }
+            draw_screen();
         }
 
         updated = false;
     }
 
     // Free all allocated memory here.
-    destroy_screen_data(screen_data, height);
+    destroy_screen();
 
     return 0;
 }

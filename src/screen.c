@@ -1,6 +1,21 @@
 #include <sys/ioctl.h>
 #include <malloc.h>
 #include "screen.h"
+#include "math.h"
+
+/**
+ * Stuff needed:
+ * - camera box where you see the world
+ * - a sidebar where you see descriptions, interact with menus
+ * - a bottom bar where you see I/O related stuff
+ */
+typedef struct {
+    vector2_t screen_size;
+    char **screen_data;
+    // vector2_t sidebar_size;
+} screen_t;
+
+static screen_t screen;
 
 int get_width(void) {
     struct winsize w;
@@ -17,24 +32,69 @@ int get_height(void) {
 /**
  * Allocates memory for the screen data and fills it with space characters by default. The caller needs to free the allocated memory.
  */
-char **init_screen_data(int width, int height) {
-    char **screen_data = (char **) malloc(height * sizeof(char *)); // Allocate array of char arrays.
-    for (int y = 0; y < height; ++y) {
-        screen_data[y] = (char *) malloc (width * sizeof(char)); // Allocate char array.
-        for (int x = 0; x < width; ++x) {
-            screen_data[y][x] = ' '; // Fill line with blank chars.
+// char **init_screen() {
+//     vector2_t screen_size = { get_width(), get_height() };
+
+//     char **screen_data = (char **) malloc(screen_size.y * sizeof(char *)); // Allocate array of char arrays.
+//     for (int y = 0; y < screen_size.y; ++y) {
+//         screen_data[y] = (char *) malloc (screen_size.x * sizeof(char)); // Allocate char array.
+//         for (int x = 0; x < screen_size.x; ++x) {
+//             screen_data[y][x] = ' '; // Fill line with blank chars.
+//         }
+//     }
+
+//     return screen_data;
+// }
+
+/**
+ * Allocates memory for the screen data and fills it with space characters by default. The caller needs to free the allocated memory.
+ * 
+ * Sets the static variable named screen.
+ */
+void init_screen() {
+    vector2_t screen_size = { .x = get_width(), .y = get_height() };
+    screen.screen_size = screen_size;
+
+    char **screen_data = (char **) malloc(screen_size.y * sizeof(char *)); // Allocate array of char arrays.
+    for (int y = 0; y < screen_size.y; ++y) {
+        screen_data[y] = (char *) malloc (screen_size.x * sizeof(char)); // Allocate char array.
+        for (int x = 0; x < screen_size.x; ++x) {
+            screen_data[y][x] = '.'; // Fill line with blank chars.
         }
     }
 
-    return screen_data;
+    screen.screen_data = screen_data;
 }
 
-void destroy_screen_data(char **screen_data, int height) {
+/**
+ * Frees the allocated memory for the screen data.
+ */
+void destroy_screen() {
     // Free all chars individually.
-    for (int y = 0; y < height; ++y) {
-        free(screen_data[y]);
+    for (int y = 0; y < screen.screen_size.y; ++y) {
+        free(screen.screen_data[y]);
     }
 
     // Free the array.
-    free(screen_data);
+    free(screen.screen_data);
+}
+
+/**
+ * Draws the characters in screen data.
+ */
+void draw_screen() {
+    printf("\033[2J"); // Clear the terminal
+
+    for (int y = 0; y < screen.screen_size.y; ++y) {
+        fwrite(screen.screen_data[y], sizeof(char), screen.screen_size.x, stdout);
+
+        // Skip the last new line character.
+        if (y == screen.screen_size.y - 1) {
+            continue;
+        }
+
+        putchar('\n');  // Print newline after each row
+    }
+
+    fflush(stdout);  // Ensure output is written immediately
 }
