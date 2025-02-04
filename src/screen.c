@@ -18,16 +18,7 @@ void init_screen(screen_t *screen) {
     struct winsize w;
     ioctl(0, TIOCGWINSZ, &w); // Get the size of the terminal
     vector2_t screen_size = { .x = w.ws_col, .y = w.ws_row };
-
     // printf("init_screen: screen size: %dx%d\n", screen_size.x, screen_size.y);
-
-    // char **screen_data = (char **) malloc(screen_size.y * sizeof(char *)); // Allocate array of char arrays.
-    // for (int y = 0; y < screen_size.y; ++y) {
-    //     screen_data[y] = (char *) malloc (screen_size.x * sizeof(char)); // Allocate char array.
-    //     for (int x = 0; x < screen_size.x; ++x) {
-    //         screen_data[y][x] = '.'; // Fill line with blank chars.
-    //     }
-    // }
 
     char *screen_data = (char *) malloc(screen_size.x * screen_size.y * sizeof(char)); // Allocate 1D array for memory efficiency.
 
@@ -43,13 +34,7 @@ void init_screen(screen_t *screen) {
  * Frees the allocated memory for the screen data.
  */
 void destroy_screen(screen_t *screen) {
-    // Free all chars individually.
-    // for (int y = 0; y < screen->screen_size.y; ++y) {
-    //     free(screen->screen_data[y]);
-    // }
-
-    // Free the array.
-    free(screen->screen_data);
+    free(screen->screen_data); // Free the array.
 }
 
 void update_screen_data(const screen_t *screen, const world_t *world, const entities_t *entities) {
