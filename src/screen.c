@@ -31,23 +31,6 @@ int get_height(void) {
 
 /**
  * Allocates memory for the screen data and fills it with space characters by default. The caller needs to free the allocated memory.
- */
-// char **init_screen() {
-//     vector2_t screen_size = { get_width(), get_height() };
-
-//     char **screen_data = (char **) malloc(screen_size.y * sizeof(char *)); // Allocate array of char arrays.
-//     for (int y = 0; y < screen_size.y; ++y) {
-//         screen_data[y] = (char *) malloc (screen_size.x * sizeof(char)); // Allocate char array.
-//         for (int x = 0; x < screen_size.x; ++x) {
-//             screen_data[y][x] = ' '; // Fill line with blank chars.
-//         }
-//     }
-
-//     return screen_data;
-// }
-
-/**
- * Allocates memory for the screen data and fills it with space characters by default. The caller needs to free the allocated memory.
  * 
  * Sets the static variable named screen.
  */
