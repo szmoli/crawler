@@ -2,11 +2,16 @@
 #include <stdbool.h>
 #include "screen.h"
 
+#define DEBUG
+
 int main(void) {
+    screen_t screen;
     bool running = true;
     bool updated = true;
     
-    init_screen();
+    init_screen(&screen);
+    // printf("screen size: %dx%d\n", screen.screen_size.x, screen.screen_size.y);
+
 
     /**
      *  1. check input
@@ -29,14 +34,14 @@ int main(void) {
 
         // drawing the screen
         if (updated) {
-            draw_screen();
+            draw_screen(&screen);
         }
 
         updated = false;
     }
 
     // Free all allocated memory here.
-    destroy_screen();
+    destroy_screen(&screen);
 
     return 0;
 }

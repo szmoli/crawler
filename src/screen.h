@@ -1,12 +1,18 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
-int get_width(void);
-int get_height(void);
-// char **init_screen(int width, int height);
-void init_screen();
-// void destroy_screen(char **screen_data, int height);
-void destroy_screen();
-void draw_screen();
+#include "math.h"
+#include "world.h"
+#include "entities.h"
+
+typedef struct {
+    vector2_t screen_size;
+    char *screen_data;
+} screen_t;
+
+void init_screen(screen_t *screen);
+void destroy_screen(screen_t *screen);
+void update_screen_data(const screen_t *screen, const world_t *world, const entities_t *entities);
+void draw_screen(const screen_t *screen);
 
 #endif
