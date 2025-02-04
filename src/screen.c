@@ -76,8 +76,8 @@ void draw_screen() {
             continue;
         }
 
-        putchar('\n');  // Print newline after each row
+        putchar('\n');
     }
 
-    fflush(stdout);  // Ensure output is written immediately
+    fflush(stdout);
 }
