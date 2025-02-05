@@ -40,17 +40,15 @@ bool update_screen_data(screen_t *screen, const vector2_t *camera_pos, const wor
     };
 
     for (int i = 0; i < screen->screen_size.x * screen->screen_size.y; ++i) {
-        vector2_t pos = {
-            .x = i % screen->screen_size.x + actual_camera_pos.x,
-            .y = i / screen->screen_size.x + actual_camera_pos.y
-        };
-        int tile_index = pos.y * WORLD_WIDTH + pos.x;
-        char new_char = tile_chars[world->tiles[tile_index]];
+        // vector2_t pos = {
+        //     .x = i % screen->screen_size.x + actual_camera_pos.x,
+        //     .y = i / screen->screen_size.x + actual_camera_pos.y
+        // };
+        vector2_t   pos = get_screen_pos(screen, i);
+                    pos = vector_add(pos, actual_camera_pos);
+        char new_char = get_tile_char(tile_chars, get_tile_at(world, pos));
         
-        if (screen->screen_data[i] != new_char) {
-            changed = true;
-            screen->screen_data[i] = new_char;
-        }
+        changed = update_char_at(screen, pos, new_char);
     }
 
     return changed;
@@ -75,4 +73,30 @@ void render_screen(const screen_t *screen) {
     }
 
     fflush(stdout);
+}
+
+vector2_t get_screen_pos(const screen_t *screen, int num) {
+    vector2_t pos = {
+        .x = num % screen->screen_size.x,
+        .y = num / screen->screen_size.x
+    };
+
+    return pos;
+}
+
+int get_screen_data_index(const screen_t *screen, const vector2_t pos) {
+    return pos.y * screen->screen_size.x + pos.x;
+}
+
+char get_char_at(const screen_t *screen, const vector2_t pos) {
+    return screen->screen_data[get_screen_data_index(screen, pos)];
+}
+
+bool update_char_at(screen_t *screen, const vector2_t pos, char new_char) {
+    if (get_char_at(screen, pos) == new_char) {
+        return false;
+    }
+    
+    screen->screen_data[get_screen_data_index(screen, pos)] = new_char;
+    return true;
 }

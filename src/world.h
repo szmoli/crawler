@@ -25,8 +25,9 @@ typedef struct {
 // Function declarations
 void init_world(world_t *world);
 int get_tile_index(const vector2_t pos);
-void set_tile_at(world_t* world, const vector2_t pos, const tile_t new_tile);
+void set_tile_at(world_t *world, const vector2_t pos, const tile_t new_tile);
 vector2_t get_world_pos(int num);
 char get_tile_char(const char tile_chars[], const tile_t tile_type);
+tile_t get_tile_at(const world_t *world, const vector2_t pos);
 
 #endif
