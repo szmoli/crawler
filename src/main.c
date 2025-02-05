@@ -1,15 +1,18 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "screen.h"
+#include "world.h"
 
 #define DEBUG
 
 int main(void) {
     screen_t screen;
+    world_t world;
     bool running = true;
     bool updated = true;
     
     init_screen(&screen);
+    init_world(&world);
     // printf("screen size: %dx%d\n", screen.screen_size.x, screen.screen_size.y);
 
 
@@ -34,7 +37,8 @@ int main(void) {
 
         // drawing the screen
         if (updated) {
-            draw_screen(&screen);
+            update_screen_data(&screen, NULL, &world, NULL);
+            render_screen(&screen);
         }
 
         updated = false;

@@ -3,13 +3,6 @@
 #include "screen.h"
 
 /**
- * Stuff needed:
- * - camera box where you see the world
- * - a sidebar where you see descriptions, interact with menus
- * - a bottom bar where you see I/O related stuff
- */
-
-/**
  * Allocates memory for the screen data and fills it with space characters by default. The caller needs to free the allocated memory.
  * 
  * Sets the static variable named screen.
@@ -37,23 +30,31 @@ void destroy_screen(screen_t *screen) {
     free(screen->screen_data); // Free the array.
 }
 
-void update_screen_data(const screen_t *screen, const world_t *world, const entities_t *entities) {
+void update_screen_data(screen_t *screen, const vector2_t *camera_pos, const world_t *world, const entities_t *entities) {
+    vector2_t actual_camera_pos;
+    // Default to (0, 0) if no camera position was given.
+    actual_camera_pos.x = camera_pos == NULL ? 0 : camera_pos->x;
+    actual_camera_pos.y = camera_pos == NULL ? 0 : camera_pos->y;
+
     for (int i = 0; i < screen->screen_size.x * screen->screen_size.y; ++i) {
         vector2_t pos;
-        // TODO
-        // pos.x = world 
-        // pos.y =
+        pos.x = i % screen->screen_size.x + actual_camera_pos.x;
+        pos.y = i / screen->screen_size.x + actual_camera_pos.y;
+        
+        int tile_index = pos.y * WORLD_WIDTH + pos.x;
+        screen->screen_data[i] = tile_chars[world->tile_types[tile_index]];
     }
 }
 
 /**
  * Draws the characters in screen data.
  */
-void draw_screen(const screen_t *screen) {
+void render_screen(const screen_t *screen) {
     printf("\033[2J"); // Clear the terminal
 
     for (int y = 0; y < screen->screen_size.y; ++y) {
-        fwrite(screen->screen_data, sizeof(char), screen->screen_size.x, stdout);
+        int row_index = y * screen->screen_size.x;
+        fwrite((char *) ((screen->screen_data) + row_index), sizeof(char), screen->screen_size.x, stdout);
 
         // Skip the last new line character.
         if (y == screen->screen_size.y - 1) {

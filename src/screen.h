@@ -12,7 +12,7 @@ typedef struct {
 
 void init_screen(screen_t *screen);
 void destroy_screen(screen_t *screen);
-void update_screen_data(const screen_t *screen, const world_t *world, const entities_t *entities);
-void draw_screen(const screen_t *screen);
+void update_screen_data(screen_t *screen, const vector2_t *camera_pos, const world_t *world, const entities_t *entities);
+void render_screen(const screen_t *screen);
 
 #endif
