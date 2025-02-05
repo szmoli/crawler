@@ -45,7 +45,7 @@ bool update_screen_data(screen_t *screen, const vector2_t *camera_pos, const wor
             .y = i / screen->screen_size.x + actual_camera_pos.y
         };
         int tile_index = pos.y * WORLD_WIDTH + pos.x;
-        char new_char = tile_chars[world->tile_types[tile_index]];
+        char new_char = tile_chars[world->tiles[tile_index]];
         
         if (screen->screen_data[i] != new_char) {
             changed = true;

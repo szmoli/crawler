@@ -11,20 +11,34 @@ const char tile_chars[5] = {
 
 void init_world(world_t *world) {
     for (int i = 0; i < WORLD_HEIGHT * WORLD_WIDTH; ++i) {
-        vector2_t current_position = { 
-            .x = i % WORLD_WIDTH,
-            .y = i / WORLD_WIDTH
-        };
+        vector2_t pos = get_world_pos(i);
 
-        if (current_position.y % 3 == 0) {
-            world->tile_types[i] = WALL;
+        if (pos.y % 3 == 0) {
+            set_tile_at(world, pos, WALL);
         } 
         else {
-            world->tile_types[i] = NOTHING;
+            set_tile_at(world, pos, NOTHING);
         }
     }
 }
 
-char get_tile_char(const char tile_chars[], const tile_type_t tile_type) {
-    return tile_chars[tile_type];
+vector2_t get_world_pos(int num) {
+    vector2_t pos = { 
+        .x = num % WORLD_WIDTH,
+        .y = num / WORLD_WIDTH
+    };
+
+    return pos;
+}
+
+int get_tile_index(const vector2_t pos) {
+    return pos.y * WORLD_WIDTH + pos.x;
+}
+
+void set_tile_at(world_t* world, const vector2_t pos, const tile_t new_tile) {
+    world->tiles[get_tile_index(pos)] = new_tile;
+}
+
+char get_tile_char(const char tile_chars[], const tile_t tile) {
+    return tile_chars[tile];
 }
