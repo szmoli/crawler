@@ -38,7 +38,12 @@ void destroy_screen(screen_t *screen) {
 }
 
 void update_screen_data(const screen_t *screen, const world_t *world, const entities_t *entities) {
-    // TODO
+    for (int i = 0; i < screen->screen_size.x * screen->screen_size.y; ++i) {
+        vector2_t pos;
+        // TODO
+        // pos.x = world 
+        // pos.y =
+    }
 }
 
 /**
