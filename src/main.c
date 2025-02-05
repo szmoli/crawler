@@ -9,7 +9,7 @@ int main(void) {
     screen_t screen;
     world_t world;
     bool running = true;
-    bool updated = true;
+    bool needs_update = true;
     
     init_screen(&screen);
     init_world(&world);
@@ -34,14 +34,12 @@ int main(void) {
         // calculations
         // TODO
 
+        needs_update = update_screen_data(&screen, NULL, &world, NULL);
 
         // drawing the screen
-        if (updated) {
-            update_screen_data(&screen, NULL, &world, NULL);
+        if (needs_update) {
             render_screen(&screen);
         }
-
-        updated = false;
     }
 
     // Free all allocated memory here.

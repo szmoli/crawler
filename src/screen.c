@@ -30,20 +30,30 @@ void destroy_screen(screen_t *screen) {
     free(screen->screen_data); // Free the array.
 }
 
-void update_screen_data(screen_t *screen, const vector2_t *camera_pos, const world_t *world, const entities_t *entities) {
-    vector2_t actual_camera_pos;
+bool update_screen_data(screen_t *screen, const vector2_t *camera_pos, const world_t *world, const entities_t *entities) {
+    bool changed = false;
+
     // Default to (0, 0) if no camera position was given.
-    actual_camera_pos.x = camera_pos == NULL ? 0 : camera_pos->x;
-    actual_camera_pos.y = camera_pos == NULL ? 0 : camera_pos->y;
+    vector2_t actual_camera_pos = {
+        .x = camera_pos == NULL ? 0 : camera_pos->x,
+        .y = camera_pos == NULL ? 0 : camera_pos->y
+    };
 
     for (int i = 0; i < screen->screen_size.x * screen->screen_size.y; ++i) {
-        vector2_t pos;
-        pos.x = i % screen->screen_size.x + actual_camera_pos.x;
-        pos.y = i / screen->screen_size.x + actual_camera_pos.y;
-        
+        vector2_t pos = {
+            .x = i % screen->screen_size.x + actual_camera_pos.x,
+            .y = i / screen->screen_size.x + actual_camera_pos.y
+        };
         int tile_index = pos.y * WORLD_WIDTH + pos.x;
-        screen->screen_data[i] = tile_chars[world->tile_types[tile_index]];
+        char new_char = tile_chars[world->tile_types[tile_index]];
+        
+        if (screen->screen_data[i] != new_char) {
+            changed = true;
+            screen->screen_data[i] = new_char;
+        }
     }
+
+    return changed;
 }
 
 /**
