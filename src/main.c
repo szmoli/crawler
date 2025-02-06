@@ -2,17 +2,20 @@
 #include <stdbool.h>
 #include "screen.h"
 #include "world.h"
+#include "entities.h"
 
 #define DEBUG
 
 int main(void) {
     screen_t screen;
     world_t world;
+    entities_t entities;
     bool running = true;
     bool needs_update = true;
     
     init_screen(&screen);
     init_world(&world);
+    init_entities(&entities);
     // printf("screen size: %dx%d\n", screen.screen_size.x, screen.screen_size.y);
 
 
@@ -34,7 +37,7 @@ int main(void) {
         // calculations
         // TODO
 
-        needs_update = update_screen_data(&screen, NULL, &world, NULL);
+        needs_update = update_screen_data(&screen, NULL, &world, &entities);
 
         // drawing the screen
         if (needs_update) {
