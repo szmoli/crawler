@@ -1,9 +1,7 @@
 #include "world.h"
 
 // Tile map
-const char tile_chars[5] = {
-    'p', // player
-    'e', // enemy
+const char world_tilemap[WORLD_NOTHING + 1] = {
     'w', // wall
     'c', // chest
     ' '  // nothing
@@ -17,7 +15,7 @@ void init_world(world_t *world) {
             set_tile_at(world, pos, WALL);
         } 
         else {
-            set_tile_at(world, pos, NOTHING);
+            set_tile_at(world, pos, WORLD_NOTHING);
         }
     }
 }
@@ -39,8 +37,8 @@ void set_tile_at(world_t *world, const vector2_t pos, const tile_t new_tile) {
     world->tiles[get_tile_index(pos)] = new_tile;
 }
 
-char get_tile_char(const char tile_chars[], const tile_t tile) {
-    return tile_chars[tile];
+char get_world_tile_char(const char world_tilemap[], const tile_t tile) {
+    return world_tilemap[tile];
 }
 
 tile_t get_tile_at(const world_t *world, const vector2_t pos) {

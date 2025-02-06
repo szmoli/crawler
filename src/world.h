@@ -8,15 +8,13 @@
 
 // Possible tile types
 typedef enum {
-    PLAYER,
-    ENEMY,
     WALL,
     CHEST,
-    NOTHING
+    WORLD_NOTHING
 } tile_t;
 
 // Tile map declaration
-extern const char tile_chars[5];
+extern const char world_tilemap[WORLD_NOTHING + 1];
 
 typedef struct {
     tile_t tiles[WORLD_WIDTH * WORLD_HEIGHT];
@@ -27,7 +25,7 @@ void init_world(world_t *world);
 int get_tile_index(const vector2_t pos);
 void set_tile_at(world_t *world, const vector2_t pos, const tile_t new_tile);
 vector2_t get_world_pos(int num);
-char get_tile_char(const char tile_chars[], const tile_t tile_type);
+char get_world_tile_char(const char world_tilemap[], const tile_t tile_type);
 tile_t get_tile_at(const world_t *world, const vector2_t pos);
 
 #endif
