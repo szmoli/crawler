@@ -4,6 +4,7 @@
 const char world_tilemap[WORLD_NOTHING + 1] = {
     'w', // wall
     'c', // chest
+    '#', // off bounds
     ' '  // nothing
 };
 
