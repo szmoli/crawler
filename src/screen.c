@@ -39,26 +39,21 @@ bool update_screen_data(screen_t *screen, const vector2_t *camera_pos, const wor
         .y = camera_pos == NULL ? 0 : camera_pos->y
     };
     
-    // Render world tiles
+    // Render world and entity tiles
     for (int i = 0; i < screen->screen_size.x * screen->screen_size.y; ++i) {
         vector2_t screen_pos = get_screen_pos(screen, i);
         vector2_t world_pos = vector_add(screen_pos, actual_camera_pos);
+
         char new_char = get_world_tile_char(world_tilemap, get_tile_at(world, world_pos));
+
+        // TODO: I don't really like this approach because I need to loop over all the entities for every pixel which feels really wasteful but I don't have a better idea yet so I'm sticking with it for now.
+        int entity_index = get_entity_at(entities, world_pos);
+        if (entity_index != MAX_ENTITIES) {
+            new_char = get_entity_tile_char(entities, entity_tilemap, entity_index);
+        }
         
-        changed = update_char_at(screen, screen_pos, new_char);
+        changed |= update_char_at(screen, screen_pos, new_char); // If changed was set to true already keep it that way.
     }
-
-    // Render entity tiles
-    // for (int i = 0; i < MAX_ENTITIES; ++i) {
-    //     if (entities->types[i] == ENTITY_NOTHING) {
-    //         continue;
-    //     }
-
-    //     char new_char = get_entity_tile_char(entities, entity_tilemap, i);
-    //     vector2_t screen_pos = vector_substract(get_entity_pos(entities, i), actual_camera_pos);
-
-    //     changed = update_char_at(screen, screen_pos, new_char);
-    // }
 
     return changed;
 }
