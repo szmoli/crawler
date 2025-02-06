@@ -10,6 +10,10 @@ int main(void) {
     screen_t screen;
     world_t world;
     entities_t entities;
+    vector2_t camera_pos = {
+        .x = 0,
+        .y = 0
+    };
     bool running = true;
     bool needs_update = true;
     
@@ -37,7 +41,7 @@ int main(void) {
         // calculations
         // TODO
 
-        needs_update = update_screen_data(&screen, NULL, &world, &entities);
+        needs_update = update_screen_data(&screen, &camera_pos, &world, &entities);
 
         // drawing the screen
         if (needs_update) {

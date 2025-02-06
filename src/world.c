@@ -11,7 +11,7 @@ void init_world(world_t *world) {
     for (int i = 0; i < WORLD_HEIGHT * WORLD_WIDTH; ++i) {
         vector2_t pos = get_world_pos(i);
 
-        if (pos.y % 3 == 0) {
+        if (pos.y % 2 == 1 && pos.x % 2 == 1) {
             set_tile_at(world, pos, WALL);
         } 
         else {
