@@ -24,3 +24,7 @@ vector2_t vector_substract(vector2_t u, vector2_t v) {
 int vector_dot_product(vector2_t u, vector2_t v) {
     return u.x * v.x + u.y * v.y;
 }
+
+bool are_vectors_equal(vector2_t u, vector2_t v) {
+    return u.x == v.x && u.y == v.y;
+}
