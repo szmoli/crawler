@@ -32,3 +32,17 @@ char get_entity_tile_char(const entities_t *entities, const char *entity_tilemap
 vector2_t get_entity_pos(const entities_t *entities, int index) {
     return entities->positions[index];
 }
+
+/**
+ * Returns an entity index or MAX_ENTITIES there is no entity at the position.
+ */
+int get_entity_at(const entities_t *entities, vector2_t pos) {
+    int i;
+    for (int i = 0; i < MAX_ENTITIES; ++i) {
+        if (are_vectors_equal(entities->positions[i], pos)) {
+            return i;
+        }
+    }
+
+    return MAX_ENTITIES; // Return MAX_ENTITIES if not found since this is an invalid index and I prefer it over returning -1.
+}
