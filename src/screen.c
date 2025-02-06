@@ -43,10 +43,18 @@ bool update_screen_data(screen_t *screen, const vector2_t *camera_pos, const wor
     for (int i = 0; i < screen->screen_size.x * screen->screen_size.y; ++i) {
         vector2_t screen_pos = get_screen_pos(screen, i);
         vector2_t world_pos = vector_add(screen_pos, actual_camera_pos);
+        char new_char;
 
-        char new_char = get_world_tile_char(world_tilemap, get_tile_at(world, world_pos));
+        // Check if the world position is within the world bounds.
+        if (world_pos.x < 0 || world_pos.x > WORLD_WIDTH || world_pos.y < 0 || world_pos.y > WORLD_HEIGHT) {
+            new_char = world_tilemap[OFF_BOUNDS];
+        }
+        else {
+            new_char = get_world_tile_char(world_tilemap, get_tile_at(world, world_pos));
+        }
 
         // TODO: I don't really like this approach because I need to loop over all the entities for every pixel which feels really wasteful but I don't have a better idea yet so I'm sticking with it for now.
+        // I will need to implement a buffer for the screen and compare the buffer to the actual screen data so I can avoid flickering and the looping issue at the same time.
         int entity_index = get_entity_at(entities, world_pos);
         if (entity_index != MAX_ENTITIES) {
             new_char = get_entity_tile_char(entities, entity_tilemap, entity_index);
