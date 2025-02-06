@@ -38,18 +38,27 @@ bool update_screen_data(screen_t *screen, const vector2_t *camera_pos, const wor
         .x = camera_pos == NULL ? 0 : camera_pos->x,
         .y = camera_pos == NULL ? 0 : camera_pos->y
     };
-
+    
+    // Render world tiles
     for (int i = 0; i < screen->screen_size.x * screen->screen_size.y; ++i) {
-        // vector2_t pos = {
-        //     .x = i % screen->screen_size.x + actual_camera_pos.x,
-        //     .y = i / screen->screen_size.x + actual_camera_pos.y
-        // };
-        vector2_t   pos = get_screen_pos(screen, i);
-                    pos = vector_add(pos, actual_camera_pos);
-        char new_char = get_tile_char(tile_chars, get_tile_at(world, pos));
+        vector2_t screen_pos = get_screen_pos(screen, i);
+        vector2_t world_pos = vector_add(screen_pos, actual_camera_pos);
+        char new_char = get_world_tile_char(world_tilemap, get_tile_at(world, world_pos));
         
-        changed = update_char_at(screen, pos, new_char);
+        changed = update_char_at(screen, screen_pos, new_char);
     }
+
+    // Render entity tiles
+    // for (int i = 0; i < MAX_ENTITIES; ++i) {
+    //     if (entities->types[i] == ENTITY_NOTHING) {
+    //         continue;
+    //     }
+
+    //     char new_char = get_entity_tile_char(entities, entity_tilemap, i);
+    //     vector2_t screen_pos = vector_substract(get_entity_pos(entities, i), actual_camera_pos);
+
+    //     changed = update_char_at(screen, screen_pos, new_char);
+    // }
 
     return changed;
 }
