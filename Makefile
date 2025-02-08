@@ -7,7 +7,7 @@ out_name := build.out
 
 # rules
 build: $(wildcard $(src_dir)/*.c)
-	$(CC) -g $^ -o $(out_dir)/$(out_name)
+	$(CC) -g $^ -o $(out_dir)/$(out_name) -lm
 
 run:
 	$(out_dir)/$(out_name)
