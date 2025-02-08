@@ -4,7 +4,7 @@
 #define WORLD_WIDTH 200
 #define WORLD_HEIGHT 90
 
-#include "math.h"
+#include "custom_math.h"
 
 // Possible tile types
 typedef enum {

@@ -3,7 +3,7 @@
 
 #define MAX_ENTITIES 20
 
-#include "math.h"
+#include "custom_math.h"
 
 typedef enum {
     PLAYER,
