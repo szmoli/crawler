@@ -10,7 +10,6 @@
 typedef enum {
     WALL,
     CHEST,
-    OFF_BOUNDS,
     WORLD_NOTHING
 } tile_t;
 
