@@ -15,10 +15,6 @@ void init_screen(screen_t *screen) {
 
     char *screen_data = (char *) malloc(screen_size.x * screen_size.y * sizeof(char)); // Allocate 1D array for memory efficiency.
 
-    for (int i = 0; i < screen_size.x * screen_size.y; ++i) {
-        screen_data[i] = '.'; // Fill with blank spaces.
-    }
-
     screen->screen_size = screen_size;
     screen->screen_data = screen_data;
 }
@@ -30,38 +26,73 @@ void destroy_screen(screen_t *screen) {
     free(screen->screen_data); // Free the array.
 }
 
-bool update_screen_data(screen_t *screen, const vector2_t *camera_pos, const world_t *world, const entities_t *entities) {
+bool update_screen_data(screen_t *screen, const vector2_t camera_pos, const world_t *world, const entities_t *entities) {
     bool changed = false;
+    screen_t screen_data_buffer;
+    init_screen(&screen_data_buffer);
 
-    // Default to (0, 0) if no camera position was given.
-    vector2_t actual_camera_pos = {
-        .x = camera_pos == NULL ? 0 : camera_pos->x,
-        .y = camera_pos == NULL ? 0 : camera_pos->y
-    };
-    
-    // Render world and entity tiles
-    for (int i = 0; i < screen->screen_size.x * screen->screen_size.y; ++i) {
-        vector2_t screen_pos = get_screen_pos(screen, i);
-        vector2_t world_pos = vector_add(screen_pos, actual_camera_pos);
+    // Update screen data buffer based on the world data and overlay lighting
+    for (int cell_i = 0; cell_i < screen_data_buffer.screen_size.x * screen_data_buffer.screen_size.y; ++cell_i) {
+        vector2_t screen_pos = get_screen_pos(&screen_data_buffer, cell_i);
+        vector2_t world_pos = vector_add(screen_pos, camera_pos);
+
         char new_char;
-
         // Check if the world position is within the world bounds.
         if (world_pos.x < 0 || world_pos.x > WORLD_WIDTH || world_pos.y < 0 || world_pos.y > WORLD_HEIGHT) {
-            new_char = world_tilemap[OFF_BOUNDS];
+            new_char = world_tilemap[WORLD_NOTHING];
         }
         else {
             new_char = get_world_tile_char(world_tilemap, get_tile_at(world, world_pos));
         }
 
-        // TODO: I don't really like this approach because I need to loop over all the entities for every pixel which feels really wasteful but I don't have a better idea yet so I'm sticking with it for now.
-        // I will need to implement a buffer for the screen and compare the buffer to the actual screen data so I can avoid flickering and the looping issue at the same time.
-        int entity_index = get_entity_at(entities, world_pos);
-        if (entity_index != MAX_ENTITIES) {
-            new_char = get_entity_tile_char(entities, entity_tilemap, entity_index);
-        }
-        
-        changed |= update_char_at(screen, screen_pos, new_char); // If changed was set to true already keep it that way.
+        screen_data_buffer.screen_data[cell_i] = new_char;
     }
+
+    // Overlay entites
+    // for (int entity_i = 0; entity_i < MAX_ENTITIES; ++entity_i) {
+    //     if (entities->types[entity_i] == ENTITY_NOTHING) {
+    //         continue;
+    //     }
+
+    //     vector2_t screen_pos = vector_substract(entities->positions[entity_i], camera_pos);
+    //     char new_char = get_entity_tile_char(entities, entity_tilemap, entity_i);
+    //     screen_data_buffer.screen_data[get_screen_data_index(&screen_data_buffer, screen_pos)] = new_char;
+    // }
+
+    // Copy buffer into the screen data and compare
+    for (int cell_i = 0; cell_i < screen->screen_size.x *screen->screen_size.y; ++cell_i) {
+        changed |= screen->screen_data[cell_i] != screen_data_buffer.screen_data[cell_i];
+
+        if (!changed) {
+            continue;
+        }
+
+        screen->screen_data[cell_i] = screen_data_buffer.screen_data[cell_i];
+    }
+    
+    // Render world and entity tiles
+    // for (int i = 0; i < screen->screen_size.x * screen->screen_size.y; ++i) {
+    //     vector2_t screen_pos = get_screen_pos(screen, i);
+    //     vector2_t world_pos = vector_add(screen_pos, camera_pos);
+    //     char new_char;
+
+    //     // Check if the world position is within the world bounds.
+    //     if (world_pos.x < 0 || world_pos.x > WORLD_WIDTH || world_pos.y < 0 || world_pos.y > WORLD_HEIGHT) {
+    //         new_char = world_tilemap[WORLD_NOTHING];
+    //     }
+    //     else {
+    //         new_char = get_world_tile_char(world_tilemap, get_tile_at(world, world_pos));
+    //     }
+
+    //     // TODO: I don't really like this approach because I need to loop over all the entities for every pixel which feels really wasteful but I don't have a better idea yet so I'm sticking with it for now.
+    //     // I will need to implement a buffer for the screen and compare the buffer to the actual screen data so I can avoid flickering and the looping issue at the same time.
+    //     int entity_index = get_entity_at(entities, world_pos);
+    //     if (entity_index != MAX_ENTITIES) {
+    //         new_char = get_entity_tile_char(entities, entity_tilemap, entity_index);
+    //     }
+        
+    //     changed |= update_char_at(screen, screen_pos, new_char); // If changed was set to true already keep it that way.
+    // }
 
     return changed;
 }
