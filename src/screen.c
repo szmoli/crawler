@@ -1,6 +1,7 @@
 #include <sys/ioctl.h>
 #include <malloc.h>
 #include "screen.h"
+#include "lighting.h"
 
 /**
  * Allocates memory for the screen data and fills it with space characters by default. The caller needs to free the allocated memory.
@@ -26,10 +27,12 @@ void destroy_screen(screen_t *screen) {
     free(screen->screen_data); // Free the array.
 }
 
-bool update_screen_data(screen_t *screen, const vector2_t camera_pos, const world_t *world, const entities_t *entities) {
+bool update_screen_data(screen_t *screen, const vector2_t camera_pos, const world_t *world, const entities_t *entities, const light_sources_t* light_sources, tile_lights_t* tile_lights) {
     bool changed = false;
     screen_t screen_data_buffer;
     init_screen(&screen_data_buffer);
+
+    apply_lighting(light_sources, tile_lights);
 
     // Update screen data buffer based on the world data and overlay lighting
     for (int cell_i = 0; cell_i < screen_data_buffer.screen_size.x * screen_data_buffer.screen_size.y; ++cell_i) {
@@ -37,13 +40,22 @@ bool update_screen_data(screen_t *screen, const vector2_t camera_pos, const worl
         vector2_t world_pos = vector_add(screen_pos, camera_pos);
 
         char new_char;
+        int brightness;
         // Check if the world position is within the world bounds.
         if (world_pos.x < 0 || world_pos.x > WORLD_WIDTH || world_pos.y < 0 || world_pos.y > WORLD_HEIGHT) {
             new_char = world_tilemap[WORLD_NOTHING];
         }
-        else {
+        // The world tile is visible.
+        else if ((brightness) = get_brightness_at(tile_lights, world_pos) == MAX_BRIGHTNESS) {
             new_char = get_world_tile_char(world_tilemap, get_tile_at(world, world_pos));
         }
+        // The world tile is not visible. The light tile is rendered instead.
+        else {
+            new_char = get_light_tile_char(brightness);
+        }
+        // else {
+        //     new_char = get_world_tile_char(world_tilemap, get_tile_at(world, world_pos));
+        // }
 
         screen_data_buffer.screen_data[cell_i] = new_char;
     }

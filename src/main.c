@@ -3,6 +3,7 @@
 #include "screen.h"
 #include "world.h"
 #include "entities.h"
+#include "lighting.h"
 
 #define DEBUG
 
@@ -10,6 +11,8 @@ int main(void) {
     screen_t screen;
     world_t world;
     entities_t entities;
+    light_sources_t light_sources;
+    tile_lights_t tile_lights;
     vector2_t camera_pos = {
         .x = 0,
         .y = 0
@@ -20,6 +23,7 @@ int main(void) {
     init_screen(&screen);
     init_world(&world);
     init_entities(&entities);
+    init_lighting(&light_sources, &tile_lights);
     // printf("screen size: %dx%d\n", screen.screen_size.x, screen.screen_size.y);
 
 
@@ -41,7 +45,10 @@ int main(void) {
         // calculations
         // TODO
 
-        needs_update = update_screen_data(&screen, &camera_pos, &world, &entities);
+        vector2_t light_source_pos = { 10, 6 };
+        set_light_source(&light_sources, 0, light_source_pos, 10, 7);
+        
+        needs_update = update_screen_data(&screen, camera_pos, &world, &entities, &light_sources, &tile_lights);
 
         // drawing the screen
         if (needs_update) {
