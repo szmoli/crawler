@@ -46,7 +46,8 @@ int main(void) {
         // TODO
 
         vector2_t light_source_pos = { 10, 6 };
-        set_light_source(&light_sources, 0, light_source_pos, 10, 7);
+        set_light_source(&light_sources, 0, light_source_pos, 8, 10);
+        apply_lighting(&light_sources, &tile_lights);
         
         needs_update = update_screen_data(&screen, camera_pos, &world, &entities, &light_sources, &tile_lights);
 
@@ -54,6 +55,8 @@ int main(void) {
         if (needs_update) {
             render_screen(&screen);
         }
+
+        // break;
     }
 
     // Free all allocated memory here.
