@@ -27,37 +27,31 @@ void destroy_screen(screen_t *screen) {
     free(screen->screen_data); // Free the array.
 }
 
-bool update_screen_data(screen_t *screen, const vector2_t camera_pos, const world_t *world, const entities_t *entities, const light_sources_t* light_sources, tile_lights_t* tile_lights) {
+bool update_screen_data(screen_t *screen, const vector2_t camera_pos, const world_t *world, const entities_t *entities, const light_sources_t *light_sources, const tile_lights_t *tile_lights) {
     bool changed = false;
-    screen_t screen_data_buffer;
-    init_screen(&screen_data_buffer);
-
-    apply_lighting(light_sources, tile_lights);
+    char *screen_data_buffer = (char *) malloc(screen->screen_size.x * screen->screen_size.y * sizeof(char)); // TODO: free buffer
 
     // Update screen data buffer based on the world data and overlay lighting
-    for (int cell_i = 0; cell_i < screen_data_buffer.screen_size.x * screen_data_buffer.screen_size.y; ++cell_i) {
-        vector2_t screen_pos = get_screen_pos(&screen_data_buffer, cell_i);
+    for (int cell_i = 0; cell_i < screen->screen_size.x * screen->screen_size.y; ++cell_i) {
+        vector2_t screen_pos = get_screen_pos(screen->screen_size.x, cell_i);
         vector2_t world_pos = vector_add(screen_pos, camera_pos);
 
         char new_char;
-        int brightness;
+        int brightness = get_brightness_at(tile_lights, world_pos); 
         // Check if the world position is within the world bounds.
         if (world_pos.x < 0 || world_pos.x > WORLD_WIDTH || world_pos.y < 0 || world_pos.y > WORLD_HEIGHT) {
             new_char = world_tilemap[WORLD_NOTHING];
         }
         // The world tile is visible.
-        else if ((brightness) = get_brightness_at(tile_lights, world_pos) == MAX_BRIGHTNESS) {
+        else if (brightness == MAX_BRIGHTNESS) {
             new_char = get_world_tile_char(world_tilemap, get_tile_at(world, world_pos));
         }
         // The world tile is not visible. The light tile is rendered instead.
         else {
             new_char = get_light_tile_char(brightness);
         }
-        // else {
-        //     new_char = get_world_tile_char(world_tilemap, get_tile_at(world, world_pos));
-        // }
 
-        screen_data_buffer.screen_data[cell_i] = new_char;
+        screen_data_buffer[cell_i] = new_char;
     }
 
     // Overlay entites
@@ -72,39 +66,17 @@ bool update_screen_data(screen_t *screen, const vector2_t camera_pos, const worl
     // }
 
     // Copy buffer into the screen data and compare
-    for (int cell_i = 0; cell_i < screen->screen_size.x *screen->screen_size.y; ++cell_i) {
-        changed |= screen->screen_data[cell_i] != screen_data_buffer.screen_data[cell_i];
-
+    for (int cell_i = 0; cell_i < screen->screen_size.x * screen->screen_size.y; ++cell_i) {
+        changed |= screen->screen_data[cell_i] != screen_data_buffer[cell_i];
         if (!changed) {
             continue;
         }
-
-        screen->screen_data[cell_i] = screen_data_buffer.screen_data[cell_i];
     }
-    
-    // Render world and entity tiles
-    // for (int i = 0; i < screen->screen_size.x * screen->screen_size.y; ++i) {
-    //     vector2_t screen_pos = get_screen_pos(screen, i);
-    //     vector2_t world_pos = vector_add(screen_pos, camera_pos);
-    //     char new_char;
 
-    //     // Check if the world position is within the world bounds.
-    //     if (world_pos.x < 0 || world_pos.x > WORLD_WIDTH || world_pos.y < 0 || world_pos.y > WORLD_HEIGHT) {
-    //         new_char = world_tilemap[WORLD_NOTHING];
-    //     }
-    //     else {
-    //         new_char = get_world_tile_char(world_tilemap, get_tile_at(world, world_pos));
-    //     }
-
-    //     // TODO: I don't really like this approach because I need to loop over all the entities for every pixel which feels really wasteful but I don't have a better idea yet so I'm sticking with it for now.
-    //     // I will need to implement a buffer for the screen and compare the buffer to the actual screen data so I can avoid flickering and the looping issue at the same time.
-    //     int entity_index = get_entity_at(entities, world_pos);
-    //     if (entity_index != MAX_ENTITIES) {
-    //         new_char = get_entity_tile_char(entities, entity_tilemap, entity_index);
-    //     }
-        
-    //     changed |= update_char_at(screen, screen_pos, new_char); // If changed was set to true already keep it that way.
-    // }
+    if (changed) {
+        free(screen->screen_data);
+        screen->screen_data = screen_data_buffer;
+    } 
 
     return changed;
 }
@@ -130,10 +102,10 @@ void render_screen(const screen_t *screen) {
     fflush(stdout);
 }
 
-vector2_t get_screen_pos(const screen_t *screen, int num) {
+vector2_t get_screen_pos(int width, int num) {
     vector2_t pos = {
-        .x = num % screen->screen_size.x,
-        .y = num / screen->screen_size.x
+        .x = num % width,
+        .y = num / width
     };
 
     return pos;
