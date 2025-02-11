@@ -2,12 +2,13 @@
 #define LIGHTING_H
 
 #define MAX_LIGHT_SOURCES 128
-#define MAX_BRIGHTNESS 6
+#define MAX_BRIGHTNESS 4
 
 #include <stdbool.h>
 #include "world.h"
 #include "custom_math.h"
 
+static bool light_update;
 extern const char light_tilemap[MAX_BRIGHTNESS + 1];
 
 typedef struct {
